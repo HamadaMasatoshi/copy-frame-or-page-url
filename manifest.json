@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Copy Frame or Page URL (Decoded)",
   "description": "Right-click a framed page or any link to pop its decoded URL on the clipboard. Works on regular pages, too, unless you turn that off in Options.",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "browser_specific_settings": {
     "gecko": {
       "id": "copy-frame-url-decoded@your-custom-alias.com",
