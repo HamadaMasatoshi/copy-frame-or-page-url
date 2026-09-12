@@ -6,7 +6,7 @@
   version 1.2 - dark mode icon
   version 1.3 - option to decode unicode characters
   version 1.4 - simplify icons, add HTML link format
-  [Modified 2026] Added right-click custom context menu for decoding and copying URLs.
+  [Modified 2026] Added context menus for decoding URL and copying page title.
 */
 
 /**** Create and populate data structure ****/
@@ -59,7 +59,7 @@ let getPrefs = browser.storage.local.get("prefs").then((results) => {
     updateButtonTooltips();
 }).catch((err) => {console.log('Error retrieving "prefs" from storage: '+err.message);});
 
-/**** Context menu item ****/
+/**** Context menu items ****/
 
 let framemenu = browser.menus.create({
     id: "copy-frame-url",
@@ -67,16 +67,25 @@ let framemenu = browser.menus.create({
     contexts: ["frame"]
 });
 
-// 【修改点一】注册一个专门针对超链接（link）的右键菜单
 let linkmenu = browser.menus.create({
     id: "copy-decode-url",
     title: "Copy Decode URL",
     contexts: ["link"]
 });
 
+// 【新增】注册“仅复制页面标题”右键菜单
+let titlemenu = browser.menus.create({
+    id: "copy-page-title",
+    title: "Copy Page Title",
+    contexts: ["page", "selection"]
+});
+
 browser.menus.onClicked.addListener((menuInfo, currTab) => {
     switch (menuInfo.menuItemId) {
-        // 【修改点二】追加新菜单的处理事件
+        // 【新增】处理复制标题事件
+        case 'copy-page-title':
+            updateClipboard(currTab.title);
+            break;
         case 'copy-decode-url':
             updateClipboard(deco(menuInfo.linkUrl));
             break;
@@ -147,7 +156,7 @@ browser.browserAction.onClicked.addListener((tab, clickData) => {
     } else if (style == 'markdown'){
         var txt = '[' + tab.title + '](' + deco(tab.url) + ')';
     } else {
-        txt = deco(tab.url);
+        var txt = deco(tab.url);
     }
     updateClipboard(txt);
 });
@@ -222,7 +231,7 @@ browser.pageAction.onClicked.addListener((tab, clickData) => {
     } else if (style == 'markdown'){
         var txt = '[' + tab.title + '](' + deco(tab.url) + ')';
     } else {
-        txt = deco(tab.url);
+        var txt = deco(tab.url);
     }
     updateClipboard(txt);
 });
